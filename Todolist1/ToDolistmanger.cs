@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ToDoListApp.ToDoListApp;
 
 namespace ToDoListApp
 {
@@ -7,7 +8,7 @@ namespace ToDoListApp
     {
         private static ToDoListManager instance;
         private List<Task> tasks = new List<Task>();
-        private TaskList taskList = new TaskList();
+        private List<IObserver> observers = new List<IObserver>();
 
         private ToDoListManager() { }
 
@@ -26,7 +27,7 @@ namespace ToDoListApp
         public void AddTask(Task task)
         {
             tasks.Add(task);
-            taskList.Update();
+            NotifyObservers(); 
         }
 
         public IEnumerable<Task> GetTasks()
@@ -36,19 +37,29 @@ namespace ToDoListApp
 
         public void SortTasksByPriority()
         {
-            int n = tasks.Count;
-            for (int i = 0; i < n - 1; i++)
+            tasks.Sort((x, y) => x.Priority.CompareTo(y.Priority));
+            NotifyObservers(); 
+        }
+
+        public void AttachObserver(IObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        private void NotifyObservers()
+        {
+            foreach (var observer in observers)
             {
-                for (int j = 0; j < n - i - 1; j++)
-                {
-                    if (tasks[j].Priority > tasks[j + 1].Priority)
-                    {
-                        Task temp = tasks[j];
-                        tasks[j] = tasks[j + 1];
-                        tasks[j + 1] = temp;
-                    }
-                }
+                observer.Update();
             }
+        }
+    }
+    namespace ToDoListApp
+    {
+        public interface IObserver
+        {
+            void Update();
+            void Observer(); 
         }
     }
 }

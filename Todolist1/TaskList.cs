@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace ToDoListApp
 {
+    public interface IObserver
+    {
+        void Update();
+    }
+
     public class TaskList : IObserver
     {
         private List<Task> tasks = new List<Task>();
@@ -16,17 +21,5 @@ namespace ToDoListApp
         {
             tasks.Add(task);
         }
-
-        public void update()
-        {
-            throw new NotImplementedException();
-        }
-
-        
-    }
-
-    public interface IObserver
-    {
-        void update();
     }
 }
